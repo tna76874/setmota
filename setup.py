@@ -14,12 +14,8 @@ setup(
     license='BSD 2-clause',
     packages=find_packages(),
     install_requires=[
-        "numpy",
-        "pandas",
-        "datetime",
-        "matplotlib",
         "requests",
-        "openpyxl",
+        "PyYAML",
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
