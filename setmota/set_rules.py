@@ -5,7 +5,7 @@ import requests
 import socket
 import yaml
 from pydantic import BaseModel, Field, ValidationError, root_validator, validator
-from typing import Union
+from typing import Union, Literal
 import re
 
 class TasmotaRule:
@@ -106,7 +106,7 @@ class PowerCommand(GeneralCommand):
     """
     Klasse für den Power-Befehl mit erweiterter Validierung.
     """
-    command: str = Field("Power", const=True, description="Befehl für die Steuerung des Power-Zustands.")
+    command: Literal["Power"] = Field(description="Befehl für die Steuerung des Power-Zustands.")
     parameters: Union[int, str] = Field(
         ..., 
         description="Power-Zustand: 0/off/false, 1/on/true, 2/toggle, 3/blink, 4/blinkoff."
