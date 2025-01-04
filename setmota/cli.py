@@ -29,7 +29,7 @@ def main():
         hostname, command, value = args.cmd
         host = Tasmota.get_host(hostname)
         auth = host.get_auth()
-        cmd = get_command_class(command)(parameters=value)
+        cmd = get_command_class(command)(value=value)
         tasmota_command = TasmotaCommand(cmd, auth=auth)
         print(tasmota_command.execute())
     else:

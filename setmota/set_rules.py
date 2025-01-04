@@ -5,7 +5,7 @@ import requests
 import socket
 import yaml
 from pydantic import BaseModel, Field, ValidationError, root_validator, validator
-from typing import Union, Literal
+from typing import Union, Literal, Optional
 import re
 
 class TasmotaRule:
@@ -100,14 +100,14 @@ class GeneralCommand(BaseModel):
         """
         Gibt den Befehl in der Form 'command parameters' zurück.
         """
-        return f"{self.command} {self.parameters}".strip()
+        return f"{self.command} {self.value}".strip()
 
 class PowerCommand(GeneralCommand):
     """
     Klasse für den Power-Befehl mit erweiterter Validierung.
     """
-    command: Literal["Power"] = Field(description="Befehl für die Steuerung des Power-Zustands.")
-    parameters: Union[int, str] = Field(
+    command: str = Field(default="Power", description="Befehl für die Steuerung des Power-Zustands.")
+    value: Union[int, str] = Field(
         ..., 
         description="Power-Zustand: 0/off/false, 1/on/true, 2/toggle, 3/blink, 4/blinkoff."
     )
@@ -117,8 +117,8 @@ class PowerCommand(GeneralCommand):
         """
         Validiert die Eingabe für den Parameter und konvertiert alternative Werte in Standardwerte.
         """
-        param = str(values.get("parameters", "")).strip().lower()
-
+        param = str(values.get("value", "")).strip().lower()
+        
         # Mapping alternativer Eingaben auf Standardwerte
         param_map = {
             "0": 0, "off": 0, "false": 0,
@@ -133,7 +133,8 @@ class PowerCommand(GeneralCommand):
                              "Erlaubt sind: 0/off/false, 1/on/true, 2/toggle, 3/blink, 4/blinkoff.")
 
         # Konvertiere den Parameter in den Standardwert
-        values["parameters"] = param_map[param]
+        values["value"] = param_map[param]
+        values["command"] = 'Power'
         return values
 
 class WebAuth(BaseModel):
@@ -169,7 +170,7 @@ def get_command_class(command: str) -> GeneralCommand:
     subclasses = GeneralCommand.__subclasses__()
     for subclass in subclasses:
         command_field = subclass.__fields__.get('command')
-        if command_field and command_field.type_.__args__[0].lower() == command.lower():
+        if command_field and command_field.default.lower() == command.lower():
             return subclass
     raise ValueError(f"Kein Befehl gefunden, der mit '{command}' übereinstimmt.")
 
