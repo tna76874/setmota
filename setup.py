@@ -16,6 +16,8 @@ setup(
     install_requires=[
         "requests",
         "PyYAML",
+        "pydantic",
+        "typing",
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
