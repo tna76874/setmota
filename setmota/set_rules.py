@@ -169,7 +169,7 @@ def get_command_class(command: str) -> GeneralCommand:
     subclasses = GeneralCommand.__subclasses__()
     for subclass in subclasses:
         command_field = subclass.__fields__.get('command')
-        if command_field and command_field.default.lower() == command.lower():
+        if command_field and command_field.type_.__args__[0].lower() == command.lower():
             return subclass
     raise ValueError(f"Kein Befehl gefunden, der mit '{command}' übereinstimmt.")
 
